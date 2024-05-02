@@ -2,17 +2,19 @@
 
 void	ft_send_bits(int pid, char i)
 {
-	int	bit;
+	int	bit_position;
+	int	BITS_IN_BYTE;
 
-	bit = 0;
-	while (bit < 8)
+	bit_position = 0;
+	BITS_IN_BYTE = 8;
+	while (bit_position < BITS_IN_BYTE)
 	{
-		if ((i & (0x01 << bit)) != 0)
+		if ((i & (1 << bit_position)) != 0)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
 		usleep(100);
-		bit++;
+		bit_position++;
 	}
 }
 

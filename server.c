@@ -7,11 +7,13 @@ void ft_handler(int signum)
 	int			BITS_IN_BYTE;
 
 	BITS_IN_BYTE = 8;
-	if (signum == SIGUSR1) {
+	if (signum == SIGUSR1)
+	{
 		byte |= (1 << bit_position);
 	}
 	bit_position++;
-	if (bit_position == BITS_IN_BYTE) {
+	if (bit_position == BITS_IN_BYTE)
+	{
 		printf("%c", byte);
 		bit_position = 0;
 		byte = 0;
