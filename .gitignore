@@ -1,0 +1,8 @@
+.vscode/
+*.sttmp/
+*.DS_Store
+*.a
+*.o
+*.out
+*.dSYM
+minitalk
