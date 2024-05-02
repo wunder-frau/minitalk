@@ -5,13 +5,10 @@ void ft_handler(int signum)
 	static int	bit_position;
 	static int	byte;
 	int			BITS_IN_BYTE;
-	
-	bit_position = 0;
-	byte = 0;
+
 	BITS_IN_BYTE = 8;
 	if (signum == SIGUSR1) {
 		byte |= (1 << bit_position);
-		printf("Received SIGUSR1!\n");
 	}
 	bit_position++;
 	if (bit_position == BITS_IN_BYTE) {
