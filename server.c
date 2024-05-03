@@ -14,7 +14,7 @@ void ft_handler(int signum)
 	bit_position++;
 	if (bit_position == BITS_IN_BYTE)
 	{
-		printf("%c", byte);
+		ft_printf("%c", byte);
 		bit_position = 0;
 		byte = 0;
 	}
@@ -27,12 +27,12 @@ int	main(int argc, char **argv)
 	(void)argv;
 	if (argc != 1)
 	{
-		printf("Error\n");
+		ft_printf("Error\n");
 		return (0);
 	}
 	pid = getpid();
-	printf("%sPID:%s %d\n", COLOR_BLUE, COLOR_GREEN, pid);
-	printf("%sPlease, enter a message...%s\n", COLOR_GRAY, COLOR_RESET);
+	ft_printf("%sPID:%s %d\n", COLOR_BLUE, COLOR_GREEN, pid);
+	ft_printf("%sPlease, enter a message...%s\n", COLOR_GRAY, COLOR_RESET);
 	while (argc == 1)
 	{
 		signal(SIGUSR1, ft_handler);

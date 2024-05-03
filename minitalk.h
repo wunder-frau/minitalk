@@ -8,10 +8,7 @@
 #define COLOR_GRAY "\033[90m"
 #define COLOR_RESET "\033[0m"
 
-# include <unistd.h>
-# include <stdio.h>
 # include <signal.h>
-//  !!
-# include <stdlib.h>
+# include "libft_/libft.h"
 
 #endif
