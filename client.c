@@ -3,10 +3,8 @@
 void	ft_send_bits(int pid, char i)
 {
 	int	bit_position;
-	int	BITS_IN_BYTE;
 
 	bit_position = 0;
-	BITS_IN_BYTE = 8;
 	while (bit_position < BITS_IN_BYTE)
 	{
 		if ((i & (1 << bit_position)) != 0)

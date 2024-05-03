@@ -4,9 +4,7 @@ void ft_handler(int signum)
 {
 	static int	bit_position;
 	static int	byte;
-	int			BITS_IN_BYTE;
 
-	BITS_IN_BYTE = 8;
 	if (signum == SIGUSR1)
 	{
 		byte |= (1 << bit_position);
