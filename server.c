@@ -31,7 +31,8 @@ int	main(int argc, char **argv)
 		return (0);
 	}
 	pid = getpid();
-	printf("\033[94mPID\033[0m \033[96m->\033[0m %d\n", pid);
+	printf("%sPID:%s %d\n", COLOR_BLUE, COLOR_GREEN, pid);
+	printf("%sPlease, enter a message...%s\n", COLOR_GRAY, COLOR_RESET);
 	while (argc == 1)
 	{
 		signal(SIGUSR1, ft_handler);
