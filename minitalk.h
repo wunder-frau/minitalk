@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minitalk.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/06 14:43:51 by istasheu          #+#    #+#             */
+/*   Updated: 2024/05/06 14:43:58 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINITALK_H
 # define MINITALK_H
 
-#ifndef BITS_IN_BYTE
-# define BITS_IN_BYTE 8
-#endif
+# ifndef BITS_IN_BYTE
+#  define BITS_IN_BYTE 8
+# endif
 # define COLOR_BLUE "\033[94m"
 # define COLOR_CYAN "\033[96m"
 # define COLOR_GREEN "\033[32m"
