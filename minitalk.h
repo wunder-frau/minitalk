@@ -16,6 +16,7 @@
 # ifndef BITS_IN_BYTE
 #  define BITS_IN_BYTE 8
 # endif
+
 # define COLOR_BLUE "\033[94m"
 # define COLOR_CYAN "\033[96m"
 # define COLOR_GREEN "\033[32m"

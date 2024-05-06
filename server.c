@@ -42,7 +42,7 @@ int	main(int argc, char **argv)
 	}
 	pid = getpid();
 	ft_printf("%sPID:%s %d\n", COLOR_BLUE, COLOR_GREEN, pid);
-	ft_printf("%sWaiting for client"
+	ft_printf("%sWaiting for client "
 		"to send a message...%s\n", COLOR_GRAY, COLOR_RESET);
 	while (argc == 1)
 	{
