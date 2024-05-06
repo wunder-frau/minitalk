@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/06 14:45:00 by istasheu          #+#    #+#             */
+/*   Updated: 2024/05/06 14:45:02 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
 void	ft_send_bits(int pid, char i)
@@ -18,12 +30,12 @@ void	ft_send_bits(int pid, char i)
 
 void	check_and_print_pid_status(int pid)
 {
-		if (kill(pid, 0) == 0)
-				ft_printf(COLOR_GREEN "PID %d is valid and refers"
-				"to an existing process." COLOR_RESET "\n", pid);
-			else
-				ft_printf(COLOR_RED "PID %d is invalid or refers"
-				"to a non-existing process." COLOR_RESET "\n", pid);
+	if (kill(pid, 0) == 0)
+		ft_printf(COLOR_GREEN "PID %d is valid. "
+			"Message has been sent." COLOR_RESET "\n", pid);
+	else
+		ft_printf(COLOR_RED "PID %d is invalid or refers"
+			"to a non-existing process." COLOR_RESET "\n", pid);
 }
 
 int	main(int argc, char **argv)
@@ -45,9 +57,9 @@ int	main(int argc, char **argv)
 	else
 	{
 		ft_printf(COLOR_RED "Error: Please provide"
-		"a valid PID and message." COLOR_RED "\n");
-		ft_printf(COLOR_CYAN "Valid input: ./client <PID>"
-		"<MESSAGE>" COLOR_CYAN "\n");
+			"a valid PID and message." COLOR_RED "\n");
+		ft_printf(COLOR_CYAN "Valid input: ./client <PID> "
+			"<MESSAGE>" COLOR_CYAN "\n");
 		return (1);
 	}
 	check_and_print_pid_status(pid);

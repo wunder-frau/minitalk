@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/06 14:45:11 by istasheu          #+#    #+#             */
+/*   Updated: 2024/05/06 14:45:16 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
-void ft_handler(int signum)
+void	ft_handler(int signum)
 {
 	static int	bit_position;
 	static int	byte;
@@ -30,7 +42,8 @@ int	main(int argc, char **argv)
 	}
 	pid = getpid();
 	ft_printf("%sPID:%s %d\n", COLOR_BLUE, COLOR_GREEN, pid);
-	ft_printf("%sPlease, enter a message...%s\n", COLOR_GRAY, COLOR_RESET);
+	ft_printf("%sWaiting for client"
+		"to send a message...%s\n", COLOR_GRAY, COLOR_RESET);
 	while (argc == 1)
 	{
 		signal(SIGUSR1, ft_handler);
