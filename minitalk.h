@@ -27,4 +27,6 @@
 # include <signal.h>
 # include "libft_/libft.h"
 
+void    handle_error(const char *context_message);
+
 #endif

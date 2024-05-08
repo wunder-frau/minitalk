@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "minitalk.h"
-
-void	handle_error(const char* context_message)
+// TO DO remove
+void	handle_error(const char *context_message)
 {
 	ft_printf("\n%sServer: unexpected error occurred%s\n", COLOR_RED, COLOR_RESET);
     ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
