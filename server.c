@@ -15,55 +15,40 @@
 void	handle_error(const char *context_message)
 {
 	ft_printf("\n%sServer: unexpected error occurred%s\n", COLOR_RED, COLOR_RESET);
-    ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
+	ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
 	exit(EXIT_FAILURE);
 }
 
-
-void	handle_byte(char* ch, int* rcount, int* cl_pid, int* bpos)
+static void handle_byte(unsigned char current_char, siginfo_t *info)
 {
-	ft_printf("%c", *ch);
-	if (*ch == '\0')
-	{
-		ft_printf("\n%s%d signal recieved from client PID: %d%s\n",
-			COLOR_GREEN, *rcount, *cl_pid, COLOR_RESET);
-		*rcount = 0;
-		*ch = 0;
-		if (kill(*cl_pid, SIGUSR1) == -1)
-			handle_error("Failed to send SIGUSR1 signal to client process.");
-		*bpos = 0;
-		return ;
+	if (current_char == '\0') {
+			ft_putchar_fd('\n', 1);
+			kill(info->si_pid, SIGUSR1);
+	} else {
+			ft_putchar_fd(current_char, 1);
 	}
-	*bpos = 0;
 }
 
-void	process_client_signal(int signum, siginfo_t *info, void *context)
+static void	handle_received_signal(int signal, siginfo_t *info, void *context)
 {
-	static int	cl_pid;
-	static int	bit;
-	static char	ch;
-	static int	rcount;
-	static int	cur_pid;
-
+	static unsigned char current_char = 0;
+	static size_t remaining_bits = 8;
 	(void)context;
-	if (!cl_pid)
-		cl_pid = info->si_pid;
-	cur_pid = info->si_pid;
-	if (cl_pid != cur_pid)
-	{
-		cl_pid = cur_pid;
-		bit = 0;
-		ch = 0;
-		rcount = 0;
+	int received_bit;
+	if (signal == SIGUSR2) {
+			received_bit = 0;
+	} else if (signal == SIGUSR1) {
+			received_bit = 1;
+	} else {
+			return;
 	}
-	ch |= (signum == SIGUSR2);
-	rcount++;
-	bit++;
-	if (bit == BITS_IN_BYTE)
-		handle_byte(&ch, &rcount, &cl_pid, &bit);
-	ch <<= 1;
-	usleep(100);
-	kill(cl_pid, SIGUSR2);
+	remaining_bits--;
+	current_char |= (received_bit << remaining_bits);
+	if (remaining_bits == 0) {
+			handle_byte(current_char, info);
+			current_char = 0;
+			remaining_bits = 8;
+	}
 }
 
 int	main(void)
@@ -72,16 +57,23 @@ int	main(void)
 	struct sigaction	act;
 
 	pid = getpid();
-	ft_printf("%sPID:%s %d\n", COLOR_BLUE, COLOR_GREEN, pid);
+	//pid_t pid = getpid();
+	ft_printf("Server PID: %d\n", pid);
+	ft_printf(COLOR_BLUE "Server PID: %d\n", pid);
 	ft_printf("%sWaiting for client "
 		"to send a message...%s\n", COLOR_GRAY, COLOR_RESET);
-	act.sa_sigaction = process_client_signal;
+	ft_memset(&act, '\0', sizeof(act));
+	act.sa_sigaction = handle_received_signal;
 	sigemptyset(&act.sa_mask);
 	act.sa_flags = SA_SIGINFO;
 	while (1)
 	{
-		sigaction(SIGUSR1, &act, 0);
-		sigaction(SIGUSR2, &act, 0);
+		if (sigaction(SIGUSR1, &act, NULL) < 0
+			|| sigaction(SIGUSR2, &act, NULL) < 0)
+		{
+			handle_error("An error has occurred");
+			exit(EXIT_FAILURE);
+		}
 		pause();
 	}
 	return (EXIT_FAILURE);

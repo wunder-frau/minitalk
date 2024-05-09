@@ -18,93 +18,73 @@ void	handle_error(const char *context_message)
 	ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
 	exit(EXIT_FAILURE);
 }
-
-void	received(int sig, siginfo_t *info, void *context)
+static void	ft_handler(int signum)
 {
-	static int sent_signals = 0;
-	(void)context;
-	(void)info;
-
-	if (sig == SIGUSR1) {
-		ft_printf("Received SIGUSR1, %d signal(s) sent successfully!\n", ++sent_signals);
-		exit(EXIT_SUCCESS);
-	}
-	else if (sig == SIGUSR2) {
-		ft_printf("Received SIGUSR2, %d signal(s) sent!\n", ++sent_signals);
-	}
+	(void)signum;
+	ft_putendl_fd("Signal Received !", 1);
+	exit(EXIT_SUCCESS);
 }
 
-void	send_char_as_binary(unsigned char c, int pid)
+static void send_text_as_signals(const char *text, pid_t target_pid)
 {
-	int	bit;
+		size_t char_index;
+		size_t remaining_bits;
+		size_t text_length;
+		int current_bit;
 
-	bit = 0;
-	while (bit < BITS_IN_BYTE)
-	{
-		if (c & 128)
+		char_index = 0;
+		text_length = ft_strlen(text);
+		while (char_index <= text_length)
 		{
-			if (kill(pid, SIGUSR2) == -1)
-				handle_error("Error sending SIGUSR2");
+				remaining_bits = 8;
+				while (remaining_bits > 0)
+				{
+						remaining_bits--;
+						current_bit = ((unsigned char)text[char_index] >> remaining_bits) & 1;
+						if (current_bit == 1) {
+								kill(target_pid, SIGUSR1);
+						} else {
+								kill(target_pid, SIGUSR2);
+						}
+						usleep(100);
+				}
+				char_index++;
 		}
-		else
-		{
-			if (kill(pid, SIGUSR1) == -1)
-				handle_error("Error sending SIGUSR1");
-		}
-		c <<= 1;
-		bit++;
-		pause();
-		usleep(100);
-	}
 }
 
-void	send_text_to_process(char *str, int pid)
+void	check_and_print_pid_status(int pid)
 {
-	int	i;
-
-	i = 0;
-	while (str[i])
-		send_char_as_binary(str[i++], pid);
-	send_char_as_binary('\0', pid);
-}
-
-void	handle_received_signal(int sig)
-{
-	static int	sent;
-
-	if (sig == SIGUSR1)
+	if (kill(pid, 0) == 0)
 	{
-		ft_printf("%s%d signal sent successfully!%s\n", COLOR_GREEN, ++sent, COLOR_RESET);
-		exit(EXIT_SUCCESS);
-	}
-	if (sig == SIGUSR2)
-		++sent;
-}
-
-int	main(int ac, char **av)
-{
-	struct sigaction sa;
-	int	server_pid;
-	int	client_pid;
-
-	client_pid = getpid();
-	if (ac == 3)
-	{
-		ft_printf("%sclient pid: %d%s\n", COLOR_RED, client_pid, COLOR_RESET);
-		sa.sa_sigaction = received;
-		sa.sa_flags = SA_SIGINFO;
-		sigaction(SIGUSR1, &sa, NULL);
-		sigaction(SIGUSR2, &sa, NULL);
-		server_pid = ft_atoi(av[1]);
-		ft_printf("%sText currently sending.. %s\n", COLOR_BLUE, COLOR_RESET);
-		send_text_to_process(av[2], server_pid);
+		ft_printf(COLOR_GREEN "PID %d is valid. "
+			"Message has been sent." COLOR_RESET "\n", pid);
+			exit(1);		
 	}
 	else
-		ft_printf("%susage: ./client <server_pid> <text to send>%s\n",
-			COLOR_RED, COLOR_RESET);
-	return (EXIT_FAILURE);
+		ft_printf(COLOR_RED "PID %d is invalid or refers"
+			"to a non-existing process." COLOR_RESET "\n", pid);
 }
 
+int main(int argc, char *argv[])
+{
+    if (argc != 3) {
+        ft_putendl_fd("Usage: <program> <pid> <text_to_send>", STDERR_FILENO);
+        return EXIT_FAILURE;
+    }
+    pid_t target_pid = ft_atoi(argv[1]);
+    if (target_pid <= 0) {
+        ft_putendl_fd("Invalid process ID provided.", STDERR_FILENO);
+        return EXIT_FAILURE;
+    }
+    if (signal(SIGUSR1, ft_handler) == SIG_ERR) {
+        handle_error("Failed to ignore SIGUSR1 signal.");
+        return EXIT_FAILURE;
+    }
+    send_text_as_signals(argv[2], target_pid);
+   	check_and_print_pid_status(target_pid);
+    pause();
+    return (0);
+}
 
 // void	ft_send_bits(int pid, char i)
 // {
