@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "minitalk.h"
-// TO DO remove
-void	handle_error(const char *context_message)
+
+void	handle_server_error(const char *context_message)
 {
 	ft_printf("\n%sServer: unexpected error occurred%s\n", COLOR_RED, COLOR_RESET);
 	ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
@@ -35,13 +35,12 @@ static void	handle_received_signal(int signal, siginfo_t *info, void *context)
 	static size_t remaining_bits = 8;
 	(void)context;
 	int received_bit;
-	if (signal == SIGUSR2) {
-			received_bit = 0;
-	} else if (signal == SIGUSR1) {
-			received_bit = 1;
-	} else {
-			return;
-	}
+	if (signal == SIGUSR2)
+		received_bit = 0;
+	else if (signal == SIGUSR1)
+		received_bit = 1;
+	else
+		return ;
 	remaining_bits--;
 	current_char |= (received_bit << remaining_bits);
 	if (remaining_bits == 0) {
@@ -57,7 +56,6 @@ int	main(void)
 	struct sigaction	act;
 
 	pid = getpid();
-	//pid_t pid = getpid();
 	ft_printf("Server PID: %d\n", pid);
 	ft_printf(COLOR_BLUE "Server PID: %d\n", pid);
 	ft_printf("%sWaiting for client "
@@ -71,7 +69,7 @@ int	main(void)
 		if (sigaction(SIGUSR1, &act, NULL) < 0
 			|| sigaction(SIGUSR2, &act, NULL) < 0)
 		{
-			handle_error("An error has occurred");
+			handle_server_error("Falied to set SIGUSR1 and SIGUSR2 handlers");
 			exit(EXIT_FAILURE);
 		}
 		pause();

@@ -12,16 +12,17 @@
 
 #include "minitalk.h"
 
-void	handle_error(const char *context_message)
+void	handle_client_error(const char *context_message)
 {
-	ft_printf("\n%sServer: unexpected error occurred%s\n", COLOR_RED, COLOR_RESET);
+	ft_putstr_fd(COLOR_RED "Error" COLOR_RESET "\n", 2);
+	ft_putstr_fd("\n" COLOR_RED "Client: unexpected error occurred" COLOR_RESET "\n", 2);
 	ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
 	exit(EXIT_FAILURE);
 }
-static void	ft_handler(int signum)
+static void	handle_signal_and_exit(int signum)
 {
 	(void)signum;
-	ft_putendl_fd("Signal Received !", 1);
+	ft_putstr_fd(COLOR_CYAN "Signal Received!", 1);
 	exit(EXIT_SUCCESS);
 }
 
@@ -41,6 +42,7 @@ static void send_text_as_signals(const char *text, pid_t target_pid)
 				{
 						remaining_bits--;
 						current_bit = ((unsigned char)text[char_index] >> remaining_bits) & 1;
+						ft_printf("current bit: %d\n", current_bit);
 						if (current_bit == 1) {
 								kill(target_pid, SIGUSR1);
 						} else {
@@ -54,37 +56,66 @@ static void send_text_as_signals(const char *text, pid_t target_pid)
 
 void	check_and_print_pid_status(int pid)
 {
+	ft_printf("pid: %d\n", pid);
 	if (kill(pid, 0) == 0)
 	{
 		ft_printf(COLOR_GREEN "PID %d is valid. "
 			"Message has been sent." COLOR_RESET "\n", pid);
-			exit(1);		
+		exit(EXIT_SUCCESS);		
 	}
 	else
-		ft_printf(COLOR_RED "PID %d is invalid or refers"
+	{
+		ft_printf(COLOR_RED "PID %d is invalid or refers "
 			"to a non-existing process." COLOR_RESET "\n", pid);
+			exit(EXIT_SUCCESS);
+	}
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     if (argc != 3) {
-        ft_putendl_fd("Usage: <program> <pid> <text_to_send>", STDERR_FILENO);
+        handle_client_error("Usage: <program> <pid> <text_to_send>");
         return EXIT_FAILURE;
     }
-    pid_t target_pid = ft_atoi(argv[1]);
+    
+    int target_pid = ft_atoi(argv[1]);
+	ft_printf("pid: %d\n", target_pid);
     if (target_pid <= 0) {
-        ft_putendl_fd("Invalid process ID provided.", STDERR_FILENO);
+        handle_client_error("Invalid process ID provided.");
         return EXIT_FAILURE;
     }
-    if (signal(SIGUSR1, ft_handler) == SIG_ERR) {
-        handle_error("Failed to ignore SIGUSR1 signal.");
+    struct sigaction sa;
+    ft_memset(&sa, 0, sizeof(struct sigaction));
+    sa.sa_handler = handle_signal_and_exit;
+    if (sigaction(SIGUSR1, &sa, NULL) == -1) {
+        handle_client_error("Failed to set SIGUSR1 signal handler.");
         return EXIT_FAILURE;
     }
     send_text_as_signals(argv[2], target_pid);
-   	check_and_print_pid_status(target_pid);
+    check_and_print_pid_status(target_pid);
     pause();
-    return (0);
+    return EXIT_SUCCESS;
 }
+
+// int	main(int argc, char *argv[])
+// {
+//     if (argc != 3) {
+//         ft_putendl_fd("Usage: <program> <pid> <text_to_send>", STDERR_FILENO);
+//         return EXIT_FAILURE;
+//     }
+//     int target_pid = ft_atoi(argv[1]);
+//     if (target_pid <= 0) {
+//         ft_putendl_fd("Invalid process ID provided.", STDERR_FILENO);
+//         return EXIT_FAILURE;
+//     }
+//     if (signal(SIGUSR1, NULL) == SIG_ERR) {
+//         handle_error("Failed to ignore SIGUSR1 signal.");
+//         return EXIT_FAILURE;
+//     }
+//     send_text_as_signals(argv[2], target_pid);
+//     check_and_print_pid_status(target_pid);
+//     pause();
+//     return (0);
+// }
 
 // void	ft_send_bits(int pid, char i)
 // {
