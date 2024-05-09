@@ -71,102 +71,30 @@ void	check_and_print_pid_status(int pid)
 	}
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        handle_client_error("Usage: <program> <pid> <text_to_send>");
-        return EXIT_FAILURE;
-    }
-    
-    int target_pid = ft_atoi(argv[1]);
-	ft_printf("pid: %d\n", target_pid);
-    if (target_pid <= 0) {
-        handle_client_error("Invalid process ID provided.");
-        return EXIT_FAILURE;
-    }
-    struct sigaction sa;
-    ft_memset(&sa, 0, sizeof(struct sigaction));
-    sa.sa_handler = handle_signal_and_exit;
-    if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-        handle_client_error("Failed to set SIGUSR1 signal handler.");
-        return EXIT_FAILURE;
-    }
-    send_text_as_signals(argv[2], target_pid);
-    check_and_print_pid_status(target_pid);
-    pause();
-    return EXIT_SUCCESS;
+int	main(int argc, char *argv[])
+{
+	struct sigaction	sa;
+	int								pid;
+
+	if (argc != 3)
+	{
+			handle_client_error("Valid input: <program> <pid> <text_to_send>");
+			return EXIT_FAILURE;
+	}
+	pid = ft_atoi(argv[1]);
+	if (pid <= 0)
+	{
+			handle_client_error("Invalid process ID provided.");
+			return EXIT_FAILURE;
+	}
+	sa.sa_handler = handle_signal_and_exit;
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+	{
+			handle_client_error("Failed to set SIGUSR1 signal handler.");
+			return EXIT_FAILURE;
+	}
+	send_text_as_signals(argv[2], pid);
+	check_and_print_pid_status(pid);
+	pause();
+	return EXIT_SUCCESS;
 }
-
-// int	main(int argc, char *argv[])
-// {
-//     if (argc != 3) {
-//         ft_putendl_fd("Usage: <program> <pid> <text_to_send>", STDERR_FILENO);
-//         return EXIT_FAILURE;
-//     }
-//     int target_pid = ft_atoi(argv[1]);
-//     if (target_pid <= 0) {
-//         ft_putendl_fd("Invalid process ID provided.", STDERR_FILENO);
-//         return EXIT_FAILURE;
-//     }
-//     if (signal(SIGUSR1, NULL) == SIG_ERR) {
-//         handle_error("Failed to ignore SIGUSR1 signal.");
-//         return EXIT_FAILURE;
-//     }
-//     send_text_as_signals(argv[2], target_pid);
-//     check_and_print_pid_status(target_pid);
-//     pause();
-//     return (0);
-// }
-
-// void	ft_send_bits(int pid, char i)
-// {
-// 	int	bit_position;
-
-// 	bit_position = 0;
-// 	while (bit_position < BITS_IN_BYTE)
-// 	{
-// 		if ((i & (1 << bit_position)) != 0)
-// 			kill(pid, SIGUSR1);
-// 		else
-// 			kill(pid, SIGUSR2);
-// 		usleep(100);
-// 		bit_position++;
-// 	}
-// }
-
-// void	check_and_print_pid_status(int pid)
-// {
-// 	if (kill(pid, 0) == 0)
-// 		ft_printf(COLOR_GREEN "PID %d is valid. "
-// 			"Message has been sent." COLOR_RESET "\n", pid);
-// 	else
-// 		ft_printf(COLOR_RED "PID %d is invalid or refers"
-// 			"to a non-existing process." COLOR_RESET "\n", pid);
-// }
-
-// int	main(int argc, char **argv)
-// {
-// 	int	pid;
-// 	int	i;
-
-// 	i = 0;
-// 	if (argc == 3)
-// 	{
-// 		pid = ft_atoi(argv[1]);
-// 		while (argv[2][i] != '\0')
-// 		{
-// 			ft_send_bits(pid, argv[2][i]);
-// 			i++;
-// 		}
-// 		ft_send_bits(pid, '\n');
-// 	}
-// 	else
-// 	{
-// 		ft_printf(COLOR_RED "Error: Please provide"
-// 			"a valid PID and message." COLOR_RED "\n");
-// 		ft_printf(COLOR_CYAN "Valid input: ./client <PID> "
-// 			"<MESSAGE>" COLOR_CYAN "\n");
-// 		return (1);
-// 	}
-// 	check_and_print_pid_status(pid);
-// 	return (0);
-// }

@@ -74,7 +74,7 @@ int	main(void)
 		}
 		pause();
 	}
-	return (EXIT_FAILURE);
+	return (0);
 }
 
 // void	ft_handler(int signum)
