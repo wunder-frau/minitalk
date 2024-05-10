@@ -71,8 +71,8 @@ int	main(void)
 
 	pid = getpid();
 	ft_printf(COLOR_BLUE "Server PID: %d\n", pid);
-	// ft_printf("%sWaiting for client "
-	// 	"to send a message...%s\n", COLOR_GRAY, COLOR_GREEN);
+	ft_printf("%sWaiting for client "
+		"to send a message...%s\n", COLOR_GRAY, COLOR_GREEN);
 	ft_memset(&act, '\0', sizeof(act));
 	sigemptyset(&act.sa_mask);
 	act.sa_sigaction = handle_received_signal;
