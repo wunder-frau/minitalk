@@ -15,7 +15,8 @@
 static void	server_error(const char *context_message)
 {
 	ft_putstr_fd(COLOR_RED "Error" COLOR_RESET "\n", 2);
-	ft_putstr_fd("\n" COLOR_RED "Server: unexpected error occurred" COLOR_RESET "\n", 2);
+	ft_putstr_fd("\n" COLOR_RED "Server: "
+		"unexpected error occurred" COLOR_RESET "\n", 2);
 	ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
 	exit(EXIT_FAILURE);
 }
@@ -37,11 +38,13 @@ static void	handle_byte(unsigned char cur_chr, siginfo_t *info)
 
 static void	handle_received_signal(int signal, siginfo_t *info, void *context)
 {
-	static unsigned char cur_chr = 0;
-	static size_t count = 8;
-	int received_bit;
-	
+	static unsigned char	cur_chr;
+	static size_t			count;
+	int						received_bit;
+
 	(void)context;
+	cur_chr = 0;
+	count = 8;
 	if (signal == SIGUSR2)
 		received_bit = 0;
 	else if (signal == SIGUSR1)
@@ -52,9 +55,9 @@ static void	handle_received_signal(int signal, siginfo_t *info, void *context)
 	cur_chr |= received_bit << count;
 	if (count == 0)
 	{
-			handle_byte(cur_chr, info);
-			cur_chr = 0;
-			count = 8;
+		handle_byte(cur_chr, info);
+		cur_chr = 0;
+		count = 8;
 	}
 }
 

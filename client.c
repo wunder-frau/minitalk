@@ -15,10 +15,12 @@
 static void	client_error(const char *context_message)
 {
 	ft_putstr_fd(COLOR_RED "Error" COLOR_RESET "\n", 2);
-	ft_putstr_fd("\n" COLOR_RED "Client: unexpected error occurred" COLOR_RESET "\n", 2);
+	ft_putstr_fd("\n" COLOR_RED "Client: "
+		"unexpected error occurred" COLOR_RESET "\n", 2);
 	ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
 	exit(EXIT_FAILURE);
 }
+
 static void	handle_signal_and_exit(int signum)
 {
 	(void)signum;
@@ -26,12 +28,12 @@ static void	handle_signal_and_exit(int signum)
 	exit(EXIT_SUCCESS);
 }
 
-static void send_text_as_signals(const char *text, pid_t pid)
+static void	send_text_as_signals(const char *text, pid_t pid)
 {
 	size_t	i;
 	size_t	len;
 	size_t	count;
-	int			current_bit;
+	int		current_bit;
 
 	i = 0;
 	len = ft_strlen(text);
@@ -71,24 +73,24 @@ static void	check_pid_status(int pid)
 int	main(int argc, char *argv[])
 {
 	struct sigaction	sa;
-	int								pid;
+	int					pid;
 
 	if (argc != 3)
 	{
-			client_error("Valid input: <program> <pid> <text_to_send>");
-			return (EXIT_FAILURE);
+		client_error("Valid input: <program> <pid> <text_to_send>");
+		return (EXIT_FAILURE);
 	}
 	pid = ft_atoi(argv[1]);
 	if (pid <= 0)
 	{
-			client_error("Invalid process ID provided.");
-			return (EXIT_FAILURE);
+		client_error("Invalid process ID provided.");
+		return (EXIT_FAILURE);
 	}
 	sa.sa_handler = handle_signal_and_exit;
 	if (sigaction(SIGUSR1, &sa, NULL) == -1)
 	{
-			client_error("Failed to set SIGUSR1 signal handler.");
-			return (EXIT_FAILURE);
+		client_error("Failed to set SIGUSR1 signal handler.");
+		return (EXIT_FAILURE);
 	}
 	send_text_as_signals(argv[2], pid);
 	check_pid_status(pid);
