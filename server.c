@@ -42,9 +42,12 @@ static void	handle_received_signal(int signal, siginfo_t *info, void *context)
 	static size_t			count;
 	int						received_bit;
 
+	if (cur_chr == 0 && count == 0)
+	{
+		cur_chr = 0;
+		count = 8;
+	}
 	(void)context;
-	cur_chr = 0;
-	count = 8;
 	if (signal == SIGUSR2)
 		received_bit = 0;
 	else if (signal == SIGUSR1)
@@ -52,7 +55,7 @@ static void	handle_received_signal(int signal, siginfo_t *info, void *context)
 	else
 		return ;
 	count--;
-	cur_chr |= received_bit << count;
+	cur_chr |= (received_bit << count);
 	if (count == 0)
 	{
 		handle_byte(cur_chr, info);
@@ -68,11 +71,11 @@ int	main(void)
 
 	pid = getpid();
 	ft_printf(COLOR_BLUE "Server PID: %d\n", pid);
-	ft_printf("%sWaiting for client "
-		"to send a message...%s\n", COLOR_GRAY, COLOR_GREEN);
+	// ft_printf("%sWaiting for client "
+	// 	"to send a message...%s\n", COLOR_GRAY, COLOR_GREEN);
 	ft_memset(&act, '\0', sizeof(act));
-	act.sa_sigaction = handle_received_signal;
 	sigemptyset(&act.sa_mask);
+	act.sa_sigaction = handle_received_signal;
 	act.sa_flags = SA_SIGINFO;
 	while (1)
 	{
