@@ -14,17 +14,16 @@
 
 static void	client_error(const char *context_message)
 {
-	ft_putstr_fd(COLOR_RED "Error" COLOR_RESET "\n", 2);
-	ft_putstr_fd("\n" COLOR_RED "Client: "
-		"unexpected error occurred" COLOR_RESET "\n", 2);
-	ft_printf("%sContext: %s%s\n", COLOR_RED, context_message, COLOR_RESET);
+	ft_putstr_fd("\n" COLOR_RED "Client: error" COLOR_RESET "\n", 2);
+	ft_printf(COLOR_BLUE);
+	ft_printf("Context: %s\n", context_message);
 	exit(EXIT_FAILURE);
 }
 
-static void	handle_signal_and_exit(int signum)
+static void	handle_signal_and_exit(int signal)
 {
-	(void)signum;
-	ft_putstr_fd(COLOR_BLUE "Signal Received!", 1);
+	if (signal == SIGUSR1)
+		ft_putstr_fd(COLOR_GREEN "\n" "Message sent successfully.\n", 1);
 	exit(EXIT_SUCCESS);
 }
 
@@ -56,17 +55,15 @@ static void	send_text_as_signals(const char *text, pid_t pid)
 
 static void	check_pid_status(int pid)
 {
-	if (kill(pid, 0) == 0)
+	if (kill(pid, 0) != 0)
 	{
-		ft_printf(COLOR_GREEN "PID %d is valid. "
-			"Message has been sent." COLOR_RESET "\n", pid);
-		exit(EXIT_SUCCESS);
-	}
-	else
-	{
+		ft_putstr_fd("\n", 2);
+		ft_printf(COLOR_RED);
+		ft_putstr_fd("Error", 2);
+		ft_putstr_fd("\n", 2);
 		ft_printf(COLOR_RED "PID %d is invalid or refers "
 			"to a non-existing process." COLOR_RESET "\n", pid);
-		exit(EXIT_SUCCESS);
+		exit(EXIT_FAILURE);
 	}
 }
 

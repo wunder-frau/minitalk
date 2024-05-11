@@ -20,6 +20,7 @@
 # define COLOR_RESET "\033[0m"
 
 # include <signal.h>
+# include <stdio.h>
 # include "libft_/libft.h"
 
 #endif
