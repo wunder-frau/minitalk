@@ -23,7 +23,7 @@ static void	server_error(const char *context_message)
 static void	handle_received_signal(int signal, siginfo_t *info, void *context)
 {
 	static unsigned char	cur_chr = 0;
-	static int						count = 8;
+	static size_t					count = 8;
 
 	(void)context;
 	if (signal == SIGUSR2)
