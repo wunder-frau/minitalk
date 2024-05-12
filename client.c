@@ -32,7 +32,7 @@ static void	send_text_as_signals(const char *text, pid_t pid)
 	size_t	i;
 	size_t	len;
 	size_t	count;
-	int		current_bit;
+	int			current_bit;
 
 	i = 0;
 	len = ft_strlen(text);
