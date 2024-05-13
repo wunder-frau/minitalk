@@ -58,6 +58,8 @@ fclean: clean
 re: fclean all
 
 .c.o:
+	@git submodule init
+	@git submodule update
 	@$(GCC) $(FLAGS) $(INCLUDE) -c $< -o $@
 
 .PHONY: all clean fclean re server client libft_comp
